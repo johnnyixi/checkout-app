@@ -1,6 +1,6 @@
 ﻿namespace CheckoutApp.DataAccess.Interfaces;
 
-internal interface IRepository<T> where T : class, new()
+public interface IRepository<T> where T : class, new()
 {
     Task AddAsync(T entity);
     Task<T> GetAsync(Guid id);

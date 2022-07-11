@@ -23,7 +23,8 @@ public class Repository<T> : IRepository<T> where T : class, new()
         {
             await context.AddAsync(entity);
             await context.SaveChangesAsync();
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             throw new AddAsyncRepositoryException(ex);
         }

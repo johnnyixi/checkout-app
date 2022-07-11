@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CheckoutApp.Business\CheckoutApp.Business.csproj" />
     <ProjectReference Include="..\DataAccess\CheckoutApp.DataAccess.csproj" />
   </ItemGroup>
 

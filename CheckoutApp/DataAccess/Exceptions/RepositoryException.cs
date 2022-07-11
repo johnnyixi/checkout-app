@@ -1,7 +1,8 @@
 ﻿namespace CheckoutApp.DataAccess.Exceptions;
 
 [Serializable]
-public class RepositoryException : Exception {
+public class RepositoryException : Exception
+{
     public RepositoryException()
     {
     }
@@ -17,16 +18,16 @@ public class RepositoryException : Exception {
     }
 }
 
-public class EntityNullRepositoryException: RepositoryException
+public class EntityNullRepositoryException : RepositoryException
 {
-    public EntityNullRepositoryException() : base("Provided entity can not be null.") 
-    { 
+    public EntityNullRepositoryException() : base("Provided entity can not be null.")
+    {
     }
 }
 
 public class AddAsyncRepositoryException : RepositoryException
 {
-    public AddAsyncRepositoryException(Exception innerException) 
+    public AddAsyncRepositoryException(Exception innerException)
         : base($"An error occured while trying to add a new entity: {innerException.Message}", innerException)
     {
     }
@@ -34,7 +35,7 @@ public class AddAsyncRepositoryException : RepositoryException
 
 public class UpdateAsyncRepositoryException : RepositoryException
 {
-    public UpdateAsyncRepositoryException(Exception innerException) 
+    public UpdateAsyncRepositoryException(Exception innerException)
         : base($"An error occured while trying to update a new entity: {innerException.Message}", innerException)
     {
 

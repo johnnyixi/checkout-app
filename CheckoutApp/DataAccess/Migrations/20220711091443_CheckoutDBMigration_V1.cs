@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace CheckoutApp.DataAccess.Migrations
 {
-    public partial class CreateInitialCheckoutDB : Migration
+    public partial class CheckoutDBMigration_V1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,8 +14,6 @@ namespace CheckoutApp.DataAccess.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Customer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotalNet = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalGross = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaysVAT = table.Column<bool>(type: "bit", nullable: false),
                     Closed = table.Column<bool>(type: "bit", nullable: false),
                     Payed = table.Column<bool>(type: "bit", nullable: false)
@@ -30,11 +27,10 @@ namespace CheckoutApp.DataAccess.Migrations
                 name: "ArticleLines",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BasketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Item = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    BasketId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,7 +39,8 @@ namespace CheckoutApp.DataAccess.Migrations
                         name: "FK_ArticleLines_Basket_BasketId",
                         column: x => x.BasketId,
                         principalTable: "Basket",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

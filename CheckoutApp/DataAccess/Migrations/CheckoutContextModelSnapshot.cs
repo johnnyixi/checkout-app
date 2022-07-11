@@ -24,13 +24,10 @@ namespace CheckoutApp.DataAccess.Migrations
 
             modelBuilder.Entity("CheckoutApp.DataAccess.Models.ArticleLine", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<Guid?>("BasketId")
+                    b.Property<Guid>("BasketId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Item")
@@ -50,7 +47,6 @@ namespace CheckoutApp.DataAccess.Migrations
             modelBuilder.Entity("CheckoutApp.DataAccess.Models.Basket", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Closed")
@@ -66,12 +62,6 @@ namespace CheckoutApp.DataAccess.Migrations
                     b.Property<bool>("PaysVAT")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("TotalGross")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalNet")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Basket");
@@ -79,9 +69,13 @@ namespace CheckoutApp.DataAccess.Migrations
 
             modelBuilder.Entity("CheckoutApp.DataAccess.Models.ArticleLine", b =>
                 {
-                    b.HasOne("CheckoutApp.DataAccess.Models.Basket", null)
+                    b.HasOne("CheckoutApp.DataAccess.Models.Basket", "Basket")
                         .WithMany("Items")
-                        .HasForeignKey("BasketId");
+                        .HasForeignKey("BasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Basket");
                 });
 
             modelBuilder.Entity("CheckoutApp.DataAccess.Models.Basket", b =>

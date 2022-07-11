@@ -2,6 +2,7 @@
 
 namespace CheckoutApp.DataAccess.Interfaces;
 
-internal interface IBasketRepository : IRepository<Basket>
+public interface IBasketRepository : IRepository<Basket>
 {
+    Task<Basket?> GetBasketAsync(Guid basketId);
 }
