@@ -28,7 +28,7 @@ public class EntityNullRepositoryException : RepositoryException
 public class AddAsyncRepositoryException : RepositoryException
 {
     public AddAsyncRepositoryException(Exception innerException)
-        : base($"An error occured while trying to add a new entity: {innerException.Message}", innerException)
+        : base($"An error occurred while trying to add a new entity: {innerException.Message}", innerException)
     {
     }
 }
@@ -36,7 +36,7 @@ public class AddAsyncRepositoryException : RepositoryException
 public class UpdateAsyncRepositoryException : RepositoryException
 {
     public UpdateAsyncRepositoryException(Exception innerException)
-        : base($"An error occured while trying to update a new entity: {innerException.Message}", innerException)
+        : base($"An error occurred while trying to update a new entity: {innerException.Message}", innerException)
     {
 
     }

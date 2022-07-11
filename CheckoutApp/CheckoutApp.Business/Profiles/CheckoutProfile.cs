@@ -4,7 +4,7 @@ using CheckoutApp.DataAccess.Models;
 
 namespace CheckoutApp.Business.Profiles;
 
-internal class CheckoutProfile : Profile
+public class CheckoutProfile : Profile
 {
     public CheckoutProfile()
     {

@@ -1,4 +1,5 @@
-﻿using CheckoutApp.Business.Models;
+﻿using CheckoutApp.Business.Exceptions;
+using CheckoutApp.Business.Models;
 using CheckoutApp.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 using IdempotentAPI.Filters;
@@ -23,7 +24,7 @@ public class BasketsController : BaseController
 
         if (basket is null)
         {
-            return NotFound();
+            return NotFound($"The basket with Id:[{id}] was not found.");
         }
 
         return Ok(basket);
@@ -44,21 +45,47 @@ public class BasketsController : BaseController
     }
 
     [HttpPut("{id}/article-line")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddArticleLineToBasket(Guid id, CreateArticleLineRequest articleLineRequest)
     {
         var basket = await _basketService.AddArticleLineToBasketAsync(id, articleLineRequest.Item, articleLineRequest.Price);
+
+        if (basket == null)
+        {
+            return BadRequest($"The basket with Id:[{id}] was not found.");
+        }
+
         return Ok(basket);
     }
 
     [HttpPatch("{id}")]
-    [Idempotent(Enabled = true)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PayBasketResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PayBasket(Guid id)
     {
-        await _basketService.PayBasket(id);
+        PayBasketResponse? payBasketResponse;
 
-        return Ok();
+        try
+        {
+            payBasketResponse = await _basketService.PayBasket(id);
+        }
+        catch (BasketAlreadyPayedException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("bla");
+        }
+
+        if (payBasketResponse is null)
+        {
+            return BadRequest($"The basket with Id:[{id}] was not found.");
+        }
+
+        return Ok(payBasketResponse);
     }
 
 }

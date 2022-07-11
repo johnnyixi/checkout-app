@@ -1,7 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
+using CheckoutApp.Business.Exceptions;
 using CheckoutApp.Business.Models;
 using CheckoutApp.DataAccess.Interfaces;
 using CheckoutApp.DataAccess.Models;
+
+using static CheckoutApp.Business.Constants.BasketServiceValidationConstants;
 
 namespace CheckoutApp.Business.Services;
 
@@ -14,12 +18,17 @@ public class BasketService : IBasketService
     public BasketService(IBasketRepository basketRepository, IVatService vatService, IMapper mapper)
     {
         _basketRepository = basketRepository ?? throw new ArgumentNullException(nameof(basketRepository));
-        _vatService = vatService;
-        _mapper = mapper;
+        _vatService = vatService ?? throw new ArgumentNullException(nameof(vatService));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<Guid> AddBasketAsync(string customer, bool paysVAT)
     {
+        if (IsInvalidCustomer(customer))
+        {
+            throw new InvalidCustomerNameException();
+        }
+
         var basket = new Basket
         {
             Customer = customer,
@@ -42,7 +51,8 @@ public class BasketService : IBasketService
 
         var basketResponse = _mapper.Map<Basket, BasketResponse>(basket);
 
-        basketResponse.TotalGross = basketResponse.TotalNet * (basketResponse.PaysVAT ? _vatService.GetDefaultVatRate() : 1.0m);
+        basketResponse.TotalNet = GetTotalNetPrice(basketResponse.Items);
+        basketResponse.TotalGross = GetTotalGrossPrice(basketResponse.TotalNet, basketResponse.PaysVAT);
 
         return basketResponse;
     }
@@ -53,7 +63,7 @@ public class BasketService : IBasketService
 
         if (basket == null)
         {
-            throw new Exception("Basket not found!");
+            return null;
         }
 
         var articleLine = new ArticleLine
@@ -71,18 +81,41 @@ public class BasketService : IBasketService
         return articleLineResponse;
     }
 
-    public async Task PayBasket(Guid basketId)
+    public async Task<PayBasketResponse?> PayBasket(Guid basketId)
     {
         var basket = await _basketRepository.GetAsync(basketId);
 
         if (basket == null)
         {
-            throw new Exception("Basket not found!");
+            return null;
+        }
+
+        if (basket.Payed)
+        {
+            throw new BasketAlreadyPayedException(basket.Id);
         }
 
         basket.Closed = true;
         basket.Payed = true;
 
-        await _basketRepository.UpdateAsync(basket);
+        var basketResponse = await _basketRepository.UpdateAsync(basket);
+
+        return new PayBasketResponse
+        {
+            BasketId = basketResponse.Id,
+            Closed = true,
+            Payed = true
+        };
     }
+
+    private static decimal GetTotalNetPrice(IEnumerable<ArticleLineResponse> items)
+        => items.Sum(item => item.Price);
+
+    private static bool IsInvalidCustomer(string? customer)
+        => customer is null 
+           || customer.Length < CustomerMinimumLength 
+           || !Regex.IsMatch(customer, CustomerRegularExpression);
+
+    private decimal GetTotalGrossPrice(decimal totalNetPrice, bool paysVAT)
+        => totalNetPrice * (paysVAT ? _vatService.GetDefaultVatRate() : 1.0m);
 }

@@ -5,11 +5,11 @@ namespace CheckoutApp.DataAccess.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class, new()
 {
-    protected readonly CheckoutContext context;
+    protected readonly CheckoutContext Context;
 
     public Repository(CheckoutContext context)
     {
-        this.context = context;
+        Context = context;
     }
 
     public async Task AddAsync(T entity)
@@ -21,8 +21,8 @@ public class Repository<T> : IRepository<T> where T : class, new()
 
         try
         {
-            await context.AddAsync(entity);
-            await context.SaveChangesAsync();
+            await Context.AddAsync(entity);
+            await Context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -30,9 +30,9 @@ public class Repository<T> : IRepository<T> where T : class, new()
         }
     }
 
-    public async Task<T> GetAsync(Guid id)
+    public async Task<T?> GetAsync(Guid id)
     {
-        return await context.Set<T>().FindAsync(id);
+        return await Context.Set<T>().FindAsync(id);
     }
 
     public async Task<T> UpdateAsync(T entity)
@@ -44,8 +44,8 @@ public class Repository<T> : IRepository<T> where T : class, new()
 
         try
         {
-            context.Update(entity);
-            await context.SaveChangesAsync();
+            Context.Update(entity);
+            await Context.SaveChangesAsync();
 
             return entity;
         }

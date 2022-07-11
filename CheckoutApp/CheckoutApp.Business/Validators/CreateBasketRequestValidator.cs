@@ -1,18 +1,17 @@
 ﻿using CheckoutApp.Business.Models;
 using FluentValidation;
+using static CheckoutApp.Business.Constants.BasketServiceValidationConstants;
 
 namespace CheckoutApp.Business.Validators;
 
 public class CreateBasketRequestValidator : AbstractValidator<CreateBasketRequest>
 {
-    private const int NameMinimumLength = 5;
-    private const string NameRegularExpression = "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$";
     public CreateBasketRequestValidator()
     {
         RuleFor(x => x.Customer)
-            .MinimumLength(NameMinimumLength)
-            .WithMessage($"Property must have a length of at least {NameMinimumLength} characters.")
-            .Matches(NameRegularExpression)
+            .MinimumLength(CustomerMinimumLength)
+            .WithMessage($"Property must have a length of at least {CustomerMinimumLength} characters.")
+            .Matches(CustomerRegularExpression)
             .WithMessage("Property must be a valid customer name.");
     }
 }
