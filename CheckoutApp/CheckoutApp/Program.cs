@@ -1,13 +1,18 @@
-using CheckoutApp.DataAccess;
-using Microsoft.EntityFrameworkCore;
+using CheckoutApp.Business.Extensions;
+using CheckoutApp.DataAccess.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<CheckoutContext>(contextBuilder 
-    => contextBuilder.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddCheckoutDbContext(builder.Configuration.GetConnectionString("Default"));
+builder.Services.AddRepositories();
+
+builder.Services.AddAutoMapperProfiles();
+builder.Services.AddCheckoutServices();
+builder.Services.AddModelValidators();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -27,5 +32,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseExceptionHandlingMiddleware();
 
 app.Run();

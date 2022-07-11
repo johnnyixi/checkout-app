@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckoutApp", "CheckoutApp\CheckoutApp.csproj", "{D56EE28B-9FC8-42C6-8F80-A043612FB767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckoutApp.DataAccess", "DataAccess\CheckoutApp.DataAccess.csproj", "{4E5CAA3F-6A62-4101-8E7C-6BD94B09A070}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckoutApp.DataAccess", "DataAccess\CheckoutApp.DataAccess.csproj", "{4E5CAA3F-6A62-4101-8E7C-6BD94B09A070}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckoutApp.Business", "CheckoutApp.Business\CheckoutApp.Business.csproj", "{705F348B-CBFC-4E87-9AB1-AF916318523C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4E5CAA3F-6A62-4101-8E7C-6BD94B09A070}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E5CAA3F-6A62-4101-8E7C-6BD94B09A070}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E5CAA3F-6A62-4101-8E7C-6BD94B09A070}.Release|Any CPU.Build.0 = Release|Any CPU
+		{705F348B-CBFC-4E87-9AB1-AF916318523C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{705F348B-CBFC-4E87-9AB1-AF916318523C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{705F348B-CBFC-4E87-9AB1-AF916318523C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{705F348B-CBFC-4E87-9AB1-AF916318523C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
