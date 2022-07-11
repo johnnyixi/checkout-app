@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 
 namespace CheckoutApp.Business.Models;
+
+[Serializable]
 public class ExceptionDetails
 {
     public int StatusCode { get; init; }

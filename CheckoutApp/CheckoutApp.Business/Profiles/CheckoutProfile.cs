@@ -9,6 +9,7 @@ internal class CheckoutProfile : Profile
     public CheckoutProfile()
     {
         CreateMap<ArticleLine, ArticleLineResponse>();
+        CreateMap<ArticleLine, CreateArticleLineResponse>();
         CreateMap<Basket, BasketResponse>();
     }
 }

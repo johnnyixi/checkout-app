@@ -1,5 +1,6 @@
 ﻿namespace CheckoutApp.Business.Models;
 
+[Serializable]
 public class BasketResponse
 {
     public string Customer { get; set; }

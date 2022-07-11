@@ -47,7 +47,7 @@ public class BasketService : IBasketService
         return basketResponse;
     }
 
-    public async Task<Basket?> AddArticleLineToBasketAsync(Guid basketId, string itemName, decimal itemPrice)
+    public async Task<CreateArticleLineResponse?> AddArticleLineToBasketAsync(Guid basketId, string itemName, decimal itemPrice)
     {
         var basket = await _basketRepository.GetBasketAsync(basketId);
 
@@ -66,7 +66,9 @@ public class BasketService : IBasketService
 
         await _basketRepository.UpdateAsync(basket);
 
-        return basket;
+        var articleLineResponse = _mapper.Map<ArticleLine, CreateArticleLineResponse>(articleLine);
+
+        return articleLineResponse;
     }
 
     public async Task PayBasket(Guid basketId)

@@ -2,6 +2,7 @@
 using CheckoutApp.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using IdempotentAPI.Filters;
 
 namespace CheckoutApp.Controllers
 {
@@ -35,12 +36,13 @@ namespace CheckoutApp.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateBasketResponse))]
-        public async Task<IActionResult> CreateBasket(CreateBasketRequest createBasketRequest)
+        [Idempotent(Enabled = true)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateBasketResponse))]
+        public async Task<IActionResult> CreateBasket([FromHeader(Name = "IdempotencyKey")] Guid idempotencyKey, CreateBasketRequest createBasketRequest)
         {
             var basketId = await _basketService.AddBasketAsync(createBasketRequest.Customer, createBasketRequest.PaysVAT);
 
-            return Ok(new CreateBasketResponse
+            return Created($"/Baskets/{basketId}",new CreateBasketResponse
             {
                 BasketId = basketId
             });
@@ -56,6 +58,7 @@ namespace CheckoutApp.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Idempotent(Enabled = true)]
         public async Task<IActionResult> PayBasket(Guid id)
         {
             await _basketService.PayBasket(id);
