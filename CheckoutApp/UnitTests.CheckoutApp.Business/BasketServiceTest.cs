@@ -7,6 +7,8 @@ using CheckoutApp.DataAccess.Exceptions;
 using CheckoutApp.DataAccess.Interfaces;
 using CheckoutApp.DataAccess.Models;
 using FluentAssertions;
+using Moq;
+using Xunit;
 
 namespace UnitTests.CheckoutApp.Business;
 
@@ -56,7 +58,7 @@ public class BasketServiceTest
             .ThrowsAsync(new AddAsyncRepositoryException(new Exception()));
 
         // Act
-        Func<Task> act = async () => { await _sut.AddBasketAsync("customer", false); };
+        Func<Task> act = async () => { await _sut.AddBasketAsync(CustomerName, false); };
 
         // Assert
         await act.Should().ThrowAsync<AddAsyncRepositoryException>();

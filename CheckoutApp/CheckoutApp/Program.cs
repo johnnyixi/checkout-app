@@ -1,5 +1,6 @@
 using CheckoutApp.Business.Extensions;
 using CheckoutApp.DataAccess.Extensions;
+using CheckoutApp.Facade;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddCheckoutDbContext(builder.Configuration.GetConnectionString("Default"));
+builder.Services.AddCheckoutDbContext(builder.Configuration);
 builder.Services.AddRepositories();
+
+builder.Services.AddScoped<IBasketFacade, BasketFacade>();
 
 builder.Services.AddAutoMapperProfiles();
 builder.Services.AddCheckoutServices();
