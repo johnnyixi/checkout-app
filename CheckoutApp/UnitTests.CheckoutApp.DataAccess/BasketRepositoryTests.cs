@@ -4,6 +4,7 @@ using CheckoutApp.DataAccess.Models;
 using CheckoutApp.DataAccess.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace UnitTests.CheckoutApp.DataAccess;
 
