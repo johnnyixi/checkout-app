@@ -1,6 +1,6 @@
 # checkout-app
 
-Introduction:
+## Introduction:
 
 This app is a simple "proof of concept"" Checkout app designed to work with .Net 6 and EF6. 
 It is in no way a production ready app as it misses a lot of "must have"" functionalities (tracing, retry, authentication, monitoring. distributed and concurrent approach, etc.).
