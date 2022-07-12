@@ -13,8 +13,8 @@ public class BasketRepository : Repository<Basket>, IBasketRepository
 
     public async Task<Basket?> GetBasketAsync(Guid basketId)
     {
-        var firstOrDefault = await Context.Basket.Include(basket => basket.Items).FirstOrDefaultAsync(basket => basket.Id == basketId);
+        var basket = await Context.Basket.Include(basket => basket.Items).FirstOrDefaultAsync(basket => basket.Id == basketId);
 
-        return firstOrDefault;
+        return basket;
     }
 }
