@@ -1,6 +1,5 @@
-﻿using CheckoutApp.Business.Exceptions;
-using CheckoutApp.Business.Models;
-using CheckoutApp.Business.Services;
+﻿using CheckoutApp.Business.Models;
+using CheckoutApp.Facade;
 using Microsoft.AspNetCore.Mvc;
 using IdempotentAPI.Filters;
 
@@ -8,26 +7,19 @@ namespace CheckoutApp.Controllers;
 
 public class BasketsController : BaseController
 {
-    private readonly IBasketService _basketService;
+    private readonly IBasketFacade _basketFacade;
 
-    public BasketsController(IBasketService basketService)
+    public BasketsController(IBasketFacade basketFacade)
     {
-        _basketService = basketService;
+        _basketFacade = basketFacade ?? throw new ArgumentNullException(nameof(basketFacade));
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateBasketResponse))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
     public async Task<IActionResult> GetBasket(Guid id)
     {
-        var basket = await _basketService.GetBasketAsync(id);
-
-        if (basket is null)
-        {
-            return NotFound($"The basket with Id:[{id}] was not found.");
-        }
-
-        return Ok(basket);
+        return await _basketFacade.GetBasket(id);
     }
 
     [HttpPost]
@@ -36,56 +28,23 @@ public class BasketsController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
     public async Task<IActionResult> CreateBasket([FromHeader(Name = "IdempotencyKey")] Guid idempotencyKey, CreateBasketRequest createBasketRequest)
     {
-        var basketId = await _basketService.AddBasketAsync(createBasketRequest.Customer, createBasketRequest.PaysVAT);
-
-        return Created($"/Baskets/{basketId}",new CreateBasketResponse
-        {
-            BasketId = basketId
-        });
+        return await _basketFacade.CreateBasket(createBasketRequest);
     }
 
     [HttpPut("{id}/article-line")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ArticleLineResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddArticleLineToBasket(Guid id, CreateArticleLineRequest articleLineRequest)
     {
-        var basket = await _basketService.AddArticleLineToBasketAsync(id, articleLineRequest.Item, articleLineRequest.Price);
-
-        if (basket == null)
-        {
-            return BadRequest($"The basket with Id:[{id}] was not found.");
-        }
-
-        return Ok(basket);
+        return await _basketFacade.AddArticleLineToBasket(id, articleLineRequest);
     }
 
     [HttpPatch("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PayBasketResponse))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
     public async Task<IActionResult> PayBasket(Guid id)
     {
-        PayBasketResponse? payBasketResponse;
-
-        try
-        {
-            payBasketResponse = await _basketService.PayBasket(id);
-        }
-        catch (BasketAlreadyPayedException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("bla");
-        }
-
-        if (payBasketResponse is null)
-        {
-            return BadRequest($"The basket with Id:[{id}] was not found.");
-        }
-
-        return Ok(payBasketResponse);
+        return await _basketFacade.PayBasket(id);
     }
-
 }
